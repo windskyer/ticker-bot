@@ -33,7 +33,7 @@ def send_welcome(message):
 # ================= 每日任务 =================
 def daily_job():
     stock_data = fetch_stock_data()
-    report = generate_report(stock_data, debug=True)
+    report = generate_report(stock_data, debug=False)
 
     print("===== 今日 AI 金融日报 =====")
     print(report)
