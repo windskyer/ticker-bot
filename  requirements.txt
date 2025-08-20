@@ -1,4 +1,0 @@
-yfinance
-openai
-requests
-python-dotenv

@@ -1,0 +1,3 @@
+yfinance
+PyYAML==6.0.2
+google-generativeai
