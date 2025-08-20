@@ -10,7 +10,7 @@ from yf import fetch_stock_data
 from msg import send_telegram_message
 
 # ================= 配置 =================
-TELEGRAM_TOKEN = cfg["telegram"]["bot_token"]
+TELEGRAM_TOKEN = cfg["telegram"]["token"]
 REPORT_TIME = cfg["telegram"]["report_time"]
 
 # === 初始化 Bot ===
