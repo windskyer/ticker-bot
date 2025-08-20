@@ -22,12 +22,17 @@ def generate_report(stock_data):
 1. 市场整体趋势
 2. 每只股票的简要点评（涨跌原因可合理推测）
 3. 未来风险或机会提示
+4. 返回格式为Markdown
 要求中文，简洁专业。
 """
 
     print(f"[{datetime.now()}] === 金融日报提示词 ===\n {prompt} \n\n")
     # 生成内容
     response = model.generate_content(prompt)
+    print(dir(response))
+    print(response.candidates)
+    print("\n\n")
+    print(response.text)
 
     # 保险的取值方式
     if response.candidates and response.candidates[0].content.parts:
