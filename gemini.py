@@ -25,6 +25,7 @@ def generate_report(stock_data):
 要求中文，简洁专业。
 """
 
+    print(f"[{datetime.now()}] === 金融日报提示词 ===\n {prompt} \n\n")
     # 生成内容
     response = model.generate_content(prompt)
 
@@ -34,5 +35,4 @@ def generate_report(stock_data):
     else:
         content = "⚠️ 没有生成内容"
 
-    print(f"[{datetime.now()}] === 金融日报 ===\n")
     return content.strip()

@@ -3,7 +3,7 @@ telegram:
   token: "8257364097:AAH4fNwUcD9B3ptvMGmKDOVgueyiJHZAHYo"
   channel_id: "@trojan100"
   chat_id: "6445682540"
-  parse_mode: "HTML"
+  parse_mode: "Markdown"
   report_time: "01:00" # 每日推送时间（本地时区）
 
 # yfinance 股票配置
