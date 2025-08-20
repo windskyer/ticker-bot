@@ -1,3 +1,4 @@
+pyTelegramBotAPI==4.14.0
 yfinance
 PyYAML==6.0.2
 google-generativeai
