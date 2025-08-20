@@ -3,7 +3,6 @@ from config import cfg
 
 
 # ================= 配置 =================
-BOT_TOKEN = cfg["telegram"]["bot_token"]
 STOCKS = cfg["yfinance"]["stocks"]   # 关注的股票
 PERIOD = cfg["yfinance"]["period"]     # 拉取周期
 INTERVAL = cfg["yfinance"]["interval"]    # 拉取粒度
