@@ -46,7 +46,6 @@ def generate_report(stock_data, max_retries=10, debug=False, wait=30):
 3. 未来风险或机会提示
 
 要求中文，简洁专业。
-生成文本格式为Markdown。
 如果无法生成完整内容，请至少输出“今日暂无数据”。
 """
 
