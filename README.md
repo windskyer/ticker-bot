@@ -1,0 +1,2 @@
+# ticker-bot
+FinanceDailyBot
