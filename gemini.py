@@ -25,7 +25,7 @@ def safe_extract(response):
     return "\n".join(texts) if texts else None
 
 
-def generate_report(stock_data, max_retries=10, debug=False, wait=5):
+def generate_report(stock_data, max_retries=10, debug=False, wait=30):
     """
     调用 Gemini 生成日报，直到有内容为止
     :param stock_data: 股票数据(dict 或 str)
