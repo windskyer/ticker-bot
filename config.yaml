@@ -1,9 +1,9 @@
 # Telegram 配置
 telegram:
-  token: 8257364097:AAH4fNwUcD9B3ptvMGmKDOVgueyiJHZAHYo
-  channel_id: @trojan100
-  chat_id: 6445682540
-  parse_mode: HTML
+  token: "8257364097:AAH4fNwUcD9B3ptvMGmKDOVgueyiJHZAHYo"
+  channel_id: "@trojan100"
+  chat_id: "6445682540"
+  parse_mode: "HTML"
   report_time: "01:00" # 每日推送时间（本地时区）
 
 # yfinance 股票配置
@@ -18,4 +18,4 @@ yfinance:
 
 # gemini
 gemini:
-  key: AIzaSyDAIH59JXJBf5uumwE_roaE7lShXtmcC8s
+  key: "AIzaSyDAIH59JXJBf5uumwE_roaE7lShXtmcC8s"
