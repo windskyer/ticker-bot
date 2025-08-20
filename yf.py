@@ -10,7 +10,7 @@ INTERVAL = cfg["yfinance"]["interval"]    # 拉取粒度
 
 # ================= 获取股票数据 =================
 def fetch_stock_data():
-    data = yf.download(STOCKS, period=PERIOD, interval=INTERVAL)["Close"]
+    data = yf.download(STOCKS, period=PERIOD, interval=INTERVAL, auto_adjust=True)["Close"]
     latest = data.tail(1).to_dict()
     return latest
 

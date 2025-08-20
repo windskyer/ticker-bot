@@ -27,6 +27,12 @@ def generate_report(stock_data):
 
     # 生成内容
     response = model.generate_content(prompt)
-    # 输出结果
-    print(f"[{datetime.now()}] === 金融日本 ===\n")
-    return response.text.strip()
+
+    # 保险的取值方式
+    if response.candidates and response.candidates[0].content.parts:
+        content = response.candidates[0].content.parts[0].text
+    else:
+        content = "⚠️ 没有生成内容"
+
+    print(f"[{datetime.now()}] === 金融日报 ===\n")
+    return content.strip()
