@@ -3,7 +3,7 @@ telegram:
   token: "8257364097:AAH4fNwUcD9B3ptvMGmKDOVgueyiJHZAHYo"
   channel_id: "@trojan100"
   chat_id: "6445682540"
-  parse_mode: "Markdown"
+  parse_mode: "MarkdownV2"
   report_time: "21:00" # 每日推送时间（本地时区）
   img_path: "/img"
 
