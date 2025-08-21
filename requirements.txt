@@ -3,3 +3,4 @@ yfinance
 PyYAML==6.0.2
 schedule==1.2.2
 google-generativeai
+matplotlib
