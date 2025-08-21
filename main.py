@@ -80,6 +80,7 @@ def send_push(message):
     立即推送 AI 金融日报
 """
     send_text(bot, message.chat.id, help_text)
+    daily_task()
 
 
 # ================= 主程序 =================
