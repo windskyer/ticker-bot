@@ -51,9 +51,35 @@ def schedule_daily_task():
 
 
 # ================= Bot 命令 =================
-@bot.message_handler(commands=['start'])
+@bot.message_handler(commands=['start', 's'])
 def send_welcome(message):
-    bot.reply_to(message, f"欢迎使用 Ticker 股市订阅助手！\n每日{TELEGRAM_REPORT_TIME}推送金融日报。", parse_mode=TELEGRAM_PARSE_MODE)
+    help_text = f"""
+欢迎使用 Ticker 股市订阅助手！
+
+可用命令：
+/start - 启动 Bot，接收每日金融日报
+/push 或 /p - 立即推送金融日报
+
+每日任务：
+- 每天 {TELEGRAM_REPORT_TIME} 自动推送 AI 金融日报
+- 包含股票收盘价、宏观资产对比
+- 回测策略图表（均线/动量/套利）
+
+使用注意：
+- 确保 Bot 已加入目标群组或频道
+- 支持 MarkdownV2 消息显示
+"""
+    send_text(bot, message.chat.id, help_text)
+
+
+# ================= Bot push 帮助命令 =================
+@bot.message_handler(commands=['push', 'p'])
+def send_push(message):
+    help_text = f"""
+    欢迎使用 Ticker 股市订阅助手！
+    立即推送 AI 金融日报
+"""
+    send_text(bot, message.chat.id, help_text)
 
 
 # ================= 主程序 =================
