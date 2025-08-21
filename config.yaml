@@ -4,7 +4,8 @@ telegram:
   channel_id: "@trojan100"
   chat_id: "6445682540"
   parse_mode: "Markdown"
-  report_time: "01:00" # 每日推送时间（本地时区）
+  report_time: "21:00" # 每日推送时间（本地时区）
+  img_path: "/img"
 
 # yfinance 股票配置
 yfinance:
@@ -13,6 +14,9 @@ yfinance:
     - "MSFT"
     - "TSLA"
     - "NVDA"
+    - "META"
+    - "AMD"
+    - "GOOG"
   period: "5d" # 拉取周期
   interval: "1d" # 拉取粒度
 
