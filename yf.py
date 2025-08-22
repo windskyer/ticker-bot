@@ -33,7 +33,7 @@ def fetch_stock_data():
     return latest
 
 
-def get_macro_data(period="1y", interval="1d"):
+def get_macro_data(period="1mo", interval="1d"):
     tickers = {
         "AAPL": "AAPL",  # 苹果
         "S&P500": "^GSPC",  # 标普500
@@ -51,7 +51,7 @@ def plot_macro_chart(data, filename=None):
     plt.figure(figsize=(12, 6))
     for col in normalized.columns:
         plt.plot(normalized.index, normalized[col], label=col)
-    plt.title("宏观资产对比：股票 vs 指数 vs 黄金 vs 比特币 (最近1年)")
+    plt.title("宏观资产对比：股票 vs 指数 vs 黄金 vs 比特币 (最近1月)")
     plt.ylabel("Normalized Price (基准=100)")
     plt.legend()
     plt.grid(True)
