@@ -3,8 +3,6 @@ from datetime import datetime
 from config import cfg
 
 TELEGRAM_PARSE_MODE = cfg["telegram"]["parse_mode"]
-MAX_LEN = 4000
-MAX_CAPTION_LEN = 1024
 
 
 # ====== 工具函数：转义 MarkdownV2 特殊字符 ======
@@ -18,11 +16,29 @@ def split_text(text: str, chunk_size: int = 4000):
     return [text[i:i+chunk_size] for i in range(0, len(text), chunk_size)]
 
 
+# ====== Markdown → Telegram 格式转换 ======
+def format_for_telegram(text: str, mode="MarkdownV2") -> str:
+    if mode == "MarkdownV2":
+        # ## Heading → *Heading*
+        text = re.sub(r'## (.*)', r'*\1*', text)
+        # **bold** → *bold*
+        text = re.sub(r'\*\*(.*?)\*\*', r'*\1*', text)
+        # 转义特殊符号
+        return escape_markdown(text)
+
+    elif mode == "HTML":
+        text = re.sub(r'## (.*)', r'<b>\1</b>', text)
+        text = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', text)
+        return text
+
+    return text
+
+
 # ================= 推送到 Telegram =================
 def send_text_to_telegram(bot, chat_id, text: str):
     try:
-        escaped_text = escape_markdown(text)
-        chunks = split_text(escaped_text)
+        formatted = format_for_telegram(text, mode=TELEGRAM_PARSE_MODE)
+        chunks = split_text(formatted)
         for chunk in chunks:
             bot.send_message(chat_id=chat_id, text=chunk, parse_mode=TELEGRAM_PARSE_MODE)
         print(f"[{datetime.now()}] 日报，自动推送成功（分段 {len(chunks)} 条）")
@@ -33,8 +49,8 @@ def send_text_to_telegram(bot, chat_id, text: str):
 # ====== 推送图片 + 分段文字 ======
 def send_photo_to_telegram(bot, chat_id, text: str, photo_path: str):
     try:
-        escaped_text = escape_markdown(text)
-        chunks = split_text(escaped_text, chunk_size=1000)  # caption 限制 1024
+        formatted = format_for_telegram(text, mode=TELEGRAM_PARSE_MODE)
+        chunks = split_text(formatted, chunk_size=1000)  # caption 限制 1024
 
         # 第一段作为 caption + 图片
         with open(photo_path, "rb") as f:
