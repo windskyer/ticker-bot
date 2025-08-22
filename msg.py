@@ -7,12 +7,12 @@ TELEGRAM_PARSE_MODE = cfg["telegram"]["parse_mode"]
 
 # ====== 转义 MarkdownV2 特殊字符 ======
 def escape_markdown_v2(text: str) -> str:
-    text = text.replace("**", "*")  # 将 Gemini 输出的 **粗体** 转为 MarkdownV2 支持的 *
     """
     转义 Telegram MarkdownV2 保留字符：
     _ * [ ] ( ) ~ ` > # + - = | { } . !
     """
-    return re.sub(r'([_*$begin:math:display$$end:math:display$()~`>#+\-=|{}.!])', r'\\\1', text)
+    text = text.replace("#", r"")
+    return re.sub(r'([_$begin:math:display$$end:math:display$()~`>#+\-=|{}.!])', r'\\\1', text)
 
 
 # ====== 工具函数：分段发送 ======
