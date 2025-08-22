@@ -27,6 +27,7 @@ def daily_task():
         # 文字日报
         stock_data = fetch_stock_data()
         report = generate_report(stock_data)
+        print(report)
         send_text_to_telegram(bot, TELEGRAM_CHAT_ID, report)
         #send_text_to_telegram(bot, TELEGRAM_CHANNEL_ID, report)
 
@@ -35,6 +36,7 @@ def daily_task():
         filename = f"{TELEGRAM_IMG_PATH}/macro.png"
         plot_macro_chart(macro_data, filename)
         report_macro = generate_report_macro(macro_data)
+        print(report_macro)
         send_photo_to_telegram(bot, TELEGRAM_CHAT_ID, report_macro, filename)
         print(f"[{datetime.now()}] ✅ 今日日报发送成功")
     except Exception as e:
