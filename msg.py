@@ -1,4 +1,5 @@
 import re
+from datetime import datetime
 from config import cfg
 
 TELEGRAM_PARSE_MODE = cfg["telegram"]["parse_mode"]
@@ -6,45 +7,43 @@ MAX_LEN = 4000
 MAX_CAPTION_LEN = 1024
 
 
-# ====== 工具函数：转义 Markdown 特殊字符 ======
-def escape_markdown(text):
-    return re.sub(r'([_*\[\]()~`>#+\-=|{}.!])', r'\\\1', text)
+# ====== 工具函数：转义 MarkdownV2 特殊字符 ======
+def escape_markdown(text: str) -> str:
+    escape_chars = r'_*[]()~`>#+-=|{}.!'
+    return re.sub(f'([{re.escape(escape_chars)}])', r'\\\1', text)
+
+
+# ====== 工具函数：分段发送 ======
+def split_text(text: str, chunk_size: int = 4000):
+    return [text[i:i+chunk_size] for i in range(0, len(text), chunk_size)]
 
 
 # ================= 推送到 Telegram =================
-def send_text(bot, chat_id, text):
-    """
-    按换行分段发送，单条消息不超过 MAX_LEN
-    """
-    lines = text.split("\n")
-    chunk = ""
-    for line in lines:
-        line_safe = escape_markdown(line) + "\n"
-        if len(chunk) + len(line_safe) > MAX_LEN:
+def send_text_to_telegram(bot, chat_id, text: str):
+    try:
+        escaped_text = escape_markdown(text)
+        chunks = split_text(escaped_text)
+        for chunk in chunks:
             bot.send_message(chat_id=chat_id, text=chunk, parse_mode=TELEGRAM_PARSE_MODE)
-            chunk = line_safe
-        else:
-            chunk += line_safe
-    if chunk:
-        bot.send_message(chat_id=chat_id, text=chunk, parse_mode=TELEGRAM_PARSE_MODE)
+        print(f"[{datetime.now()}] 日报，自动推送成功（分段 {len(chunks)} 条）")
+    except Exception as e:
+        print(f"[{datetime.now()}] 日报，自动推送失败: {e}")
 
 
-# ====== 发送图片到 Telegram ======
-def send_photo_with_text(bot, chat_id, photo_path, text):
-    """
-    发送图片 + 分段文本
-    """
-    safe_text = escape_markdown(text)
-    # 首段文字放在 caption
-    caption = safe_text[:MAX_CAPTION_LEN]
-    rest_text = safe_text[MAX_CAPTION_LEN:]
+# ====== 推送图片 + 分段文字 ======
+def send_photo_to_telegram(bot, chat_id, text: str, photo_path: str):
+    try:
+        escaped_text = escape_markdown(text)
+        chunks = split_text(escaped_text, chunk_size=1000)  # caption 限制 1024
 
-    with open(photo_path, "rb") as f:
-        bot.send_photo(chat_id=chat_id, photo=f, caption=caption, parse_mode=TELEGRAM_PARSE_MODE)
+        # 第一段作为 caption + 图片
+        with open(photo_path, "rb") as f:
+            bot.send_photo(chat_id=chat_id, photo=f, caption=chunks[0], parse_mode=TELEGRAM_PARSE_MODE)
 
-    # 剩余文字分段发送
-    while rest_text:
-        chunk = rest_text[:MAX_LEN]
-        rest_text = rest_text[MAX_LEN:]
-        bot.send_message(chat_id=chat_id, text=chunk, parse_mode=TELEGRAM_PARSE_MODE)
+        # 其余段落作为普通消息
+        for chunk in chunks[1:]:
+            bot.send_message(chat_id=chat_id, text=chunk, parse_mode=TELEGRAM_PARSE_MODE)
 
+        print(f"[{datetime.now()}] ✅ 图片+文字推送成功（共 {len(chunks)} 段）")
+    except Exception as e:
+        print(f"[{datetime.now()}] ❌ 图片推送失败: {e}")

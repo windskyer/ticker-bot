@@ -7,7 +7,7 @@ import time
 from config import cfg
 from gemini import generate_report, generate_report_macro
 from yf import fetch_stock_data, get_macro_data, plot_macro_chart
-from msg import send_text, send_photo_with_text
+from msg import send_text_to_telegram, send_photo_to_telegram
 
 # ================= 配置 =================
 TELEGRAM_TOKEN = cfg["telegram"]["token"]
@@ -27,15 +27,15 @@ def daily_task():
         # 文字日报
         stock_data = fetch_stock_data()
         report = generate_report(stock_data)
-        send_text(bot, TELEGRAM_CHAT_ID, report)
-        #send_text(bot, TELEGRAM_CHANNEL_ID, report)
+        send_text_to_telegram(bot, TELEGRAM_CHAT_ID, report)
+        #send_text_to_telegram(bot, TELEGRAM_CHANNEL_ID, report)
 
         # 图片日报
         macro_data = get_macro_data()
         filename = f"{TELEGRAM_IMG_PATH}/macro.png"
         plot_macro_chart(macro_data, filename)
         report_macro = generate_report_macro(macro_data)
-        send_photo_with_text(bot, TELEGRAM_CHAT_ID, filename, report_macro)
+        send_photo_to_telegram(bot, TELEGRAM_CHAT_ID, report_macro, filename)
         print(f"[{datetime.now()}] ✅ 今日日报发送成功")
     except Exception as e:
         print(f"[{datetime.now()}] ❌ 日报发送失败: {e}")
@@ -69,7 +69,7 @@ def send_welcome(message):
 - 确保 Bot 已加入目标群组或频道
 - 支持 MarkdownV2 消息显示
 """
-    send_text(bot, message.chat.id, help_text)
+    send_text_to_telegram(bot, message.chat.id, help_text)
 
 
 # ================= Bot push 帮助命令 =================
@@ -79,7 +79,7 @@ def send_push(message):
     欢迎使用 Ticker 股市订阅助手！
     立即推送 AI 金融日报
 """
-    send_text(bot, message.chat.id, help_text)
+    send_text_to_telegram(bot, message.chat.id, help_text)
     daily_task()
 
 
