@@ -37,8 +37,7 @@ def format_for_telegram(text: str, mode="MarkdownV2") -> str:
 # ================= 推送到 Telegram =================
 def send_text_to_telegram(bot, chat_id, text: str):
     try:
-        formatted = format_for_telegram(text, mode=TELEGRAM_PARSE_MODE)
-        chunks = split_text(formatted)
+        chunks = split_text(text)
         for chunk in chunks:
             bot.send_message(chat_id=chat_id, text=chunk, parse_mode=TELEGRAM_PARSE_MODE)
         print(f"[{datetime.now()}] 日报，自动推送成功（分段 {len(chunks)} 条）")
@@ -49,8 +48,7 @@ def send_text_to_telegram(bot, chat_id, text: str):
 # ====== 推送图片 + 分段文字 ======
 def send_photo_to_telegram(bot, chat_id, text: str, photo_path: str):
     try:
-        formatted = format_for_telegram(text, mode=TELEGRAM_PARSE_MODE)
-        chunks = split_text(formatted, chunk_size=1000)  # caption 限制 1024
+        chunks = split_text(text, chunk_size=1000)  # caption 限制 1024
 
         # 第一段作为 caption + 图片
         with open(photo_path, "rb") as f:
