@@ -12,6 +12,7 @@ def escape_markdown_v2(text: str) -> str:
     _ * [ ] ( ) ~ ` > # + - = | { } . !
     """
     text = text.replace("#", r"")
+    text = text.replace("* ", r"")
     return re.sub(r'([_$begin:math:display$$end:math:display$()~`>#+\-=|{}.!])', r'\\\1', text)
 
 
