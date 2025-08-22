@@ -7,7 +7,7 @@ import time
 from config import cfg
 from gemini import generate_report, generate_report_macro
 from yf import fetch_stock_data, get_macro_data, plot_macro_chart
-from msg import send_text, send_photo
+from msg import send_text, send_photo_with_text
 
 # ================= 配置 =================
 TELEGRAM_TOKEN = cfg["telegram"]["token"]
@@ -35,7 +35,7 @@ def daily_task():
         filename = f"{TELEGRAM_IMG_PATH}/macro.png"
         plot_macro_chart(macro_data, filename)
         report_macro = generate_report_macro(macro_data)
-        send_photo(bot, TELEGRAM_CHAT_ID, report_macro, filename)
+        send_photo_with_text(bot, TELEGRAM_CHAT_ID, filename, report_macro)
         print(f"[{datetime.now()}] ✅ 今日日报发送成功")
     except Exception as e:
         print(f"[{datetime.now()}] ❌ 日报发送失败: {e}")

@@ -30,7 +30,7 @@ def send_text(bot, chat_id, text):
 
 
 # ====== 发送图片到 Telegram ======
-def send_photo(bot, chat_id, photo_path, text):
+def send_photo_with_text(bot, chat_id, photo_path, text):
     """
     发送图片 + 分段文本
     """
