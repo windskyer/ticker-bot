@@ -7,12 +7,13 @@ TELEGRAM_PARSE_MODE = cfg["telegram"]["parse_mode"]
 
 # ====== 工具函数：转义 MarkdownV2 特殊字符 ======
 def escape_markdown(text: str) -> str:
-    escape_chars = r'[]()'
-    return re.sub(f'([{re.escape(escape_chars)}])', r'\\\1', text)
+    #escape_chars = r'[]()'
+    #return re.sub(f'([{re.escape(escape_chars)}])', r'\\\1', text)
+    return text
 
 
 # ====== 工具函数：分段发送 ======
-def split_text(text: str, chunk_size: int = 4000):
+def split_text(text: str, chunk_size: int = 1000):
     return [text[i:i+chunk_size] for i in range(0, len(text), chunk_size)]
 
 
@@ -20,7 +21,7 @@ def split_text(text: str, chunk_size: int = 4000):
 def send_text_to_telegram(bot, chat_id, text: str):
     try:
         escape = escape_markdown(text)
-        chunks = split_text(escape)
+        chunks = split_text(escape, chunk_size=1000)
         for chunk in chunks:
             bot.send_message(chat_id=chat_id, text=chunk, parse_mode=TELEGRAM_PARSE_MODE)
         print(f"[{datetime.now()}] 日报，自动推送成功（分段 {len(chunks)} 条）")
