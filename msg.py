@@ -5,9 +5,13 @@ from config import cfg
 TELEGRAM_PARSE_MODE = cfg["telegram"]["parse_mode"]
 
 
-def escape_markdown(text: str) -> str:
-    """转义 Markdown 特殊字符"""
-    return re.sub(r'([*_`\[])', r'\\\1', text)
+# ====== 转义 MarkdownV2 特殊字符 ======
+def escape_markdown_v2(text: str) -> str:
+    """
+    转义 Telegram MarkdownV2 保留字符：
+    _ * [ ] ( ) ~ ` > # + - = | { } . !
+    """
+    return re.sub(r'([_*$begin:math:display$$end:math:display$()~`>#+\-=|{}.!])', r'\\\1', text)
 
 
 # ====== 工具函数：分段发送 ======
@@ -31,8 +35,8 @@ def split_text(text: str, chunk_size: int = 1000):
 # ================= 推送到 Telegram =================
 def send_text_to_telegram(bot, chat_id, text: str):
     try:
-        safe_text = escape_markdown(text)
-        chunks = split_text(safe_text, chunk_size=1500)
+        safe_text = escape_markdown_v2(text)
+        chunks = split_text(safe_text, chunk_size=1000)
         for chunk in chunks:
             bot.send_message(chat_id=chat_id, text=chunk, parse_mode=TELEGRAM_PARSE_MODE)
         print(f"[{datetime.now()}] 日报，自动推送成功（分段 {len(chunks)} 条）")
@@ -43,8 +47,8 @@ def send_text_to_telegram(bot, chat_id, text: str):
 # ====== 推送图片 + 分段文字 ======
 def send_photo_to_telegram(bot, chat_id, text: str, photo_path: str):
     try:
-        safe_text = escape_markdown(text)
-        chunks = split_text(safe_text, chunk_size=1500)  # caption 限制 1024
+        safe_text = escape_markdown_v2(text)
+        chunks = split_text(safe_text, chunk_size=1000)  # caption 限制 1024
 
         # 第一段作为 caption + 图片
         with open(photo_path, "rb") as f:
