@@ -28,7 +28,7 @@ def daily_task():
         stock_data = fetch_stock_data()
         report = generate_report(stock_data)
         send_text(bot, TELEGRAM_CHAT_ID, report)
-        send_text(bot, TELEGRAM_CHANNEL_ID, report)
+        #send_text(bot, TELEGRAM_CHANNEL_ID, report)
 
         # 图片日报
         macro_data = get_macro_data()
