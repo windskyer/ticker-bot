@@ -81,7 +81,7 @@ def generate_report(stock_data, debug=False):
 1) 市场整体趋势
 2) 每只股票的简要点评（可合理推测驱动因素）
 3) 未来风险或机会提示
-要求：返回格式MarkdownV2、中文、专业、精炼。若信息不足，请返回“今日暂无数据”。
+要求：字数在1000以内，返回格式Markdown、中文、专业、精炼。若信息不足，请返回“今日暂无数据”。
 """
     return call_gemini_with_retry(prompt, debug=debug)
 
@@ -97,6 +97,6 @@ def generate_report_macro(data, debug=False):
 1. 宏观市场整体趋势
 2. 四类资产的表现和简要点评
 3. 风险或机会提示
-要求: 返回格式MarkdownV2、专业简洁。
+要求: 字数在1000以内，返回格式Markdown、专业简洁。
 """
     return call_gemini_with_retry(prompt, debug=debug)

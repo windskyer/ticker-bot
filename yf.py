@@ -33,12 +33,12 @@ def fetch_stock_data():
     return latest
 
 
-def get_macro_data(period="1mo", interval="1d"):
+def get_macro_data(period="1y", interval="1d"):
     tickers = {
-        "NVIDIA": "NVDA",
-        "Nasdaq100": "^NDX",
-        "Gold": "GC=F",
-        "Bitcoin": "BTC-USD"
+        "AAPL": "AAPL",  # 苹果
+        "S&P500": "^GSPC",  # 标普500
+        "Gold": "GC=F",  # 黄金期货
+        "Bitcoin": "BTC-USD"  # 比特币
     }
     df = yf.download(list(tickers.values()), period=period, interval=interval, auto_adjust=True)["Close"]
     df.rename(columns={v: k for k, v in tickers.items()}, inplace=True)
@@ -51,7 +51,7 @@ def plot_macro_chart(data, filename=None):
     plt.figure(figsize=(12, 6))
     for col in normalized.columns:
         plt.plot(normalized.index, normalized[col], label=col)
-    plt.title("宏观资产对比：NVDA vs 纳斯达克100 vs 黄金 vs 比特币")
+    plt.title("宏观资产对比：股票 vs 指数 vs 黄金 vs 比特币 (最近1年)")
     plt.ylabel("Normalized Price (基准=100)")
     plt.legend()
     plt.grid(True)
