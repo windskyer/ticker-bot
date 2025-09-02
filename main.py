@@ -24,8 +24,8 @@ bot = TeleBot(TELEGRAM_TOKEN)
 
 
 # ================= 生成并推送日报 =================
-def daily_stock_report():
-    for t in STOCKS:
+def daily_stock_report(tickers):
+    for t in tickers:
         report = analyze_stock(t)
         send_text_to_telegram(bot, TELEGRAM_CHANNEL_ID, report)
 
@@ -33,6 +33,9 @@ def daily_stock_report():
 # ================= 每日任务 =================
 def daily_task():
     try:
+        # 股票预测推送日报
+        daily_stock_report(STOCKS)
+
         # 文字日报
         stock_data = fetch_stock_data(STOCKS)
         report = generate_report(stock_data)
@@ -48,9 +51,6 @@ def daily_task():
         print(report_macro)
         send_photo_to_telegram(bot, TELEGRAM_CHAT_ID, report_macro, filename)
         # send_photo_to_telegram(bot, TELEGRAM_CHANNEL_ID, report_macro, filename)
-
-        # 股票预测推送日报
-        daily_stock_report()
         print(f"[{datetime.now()}] ✅ 今日日报发送成功")
     except Exception as e:
         print(f"[{datetime.now()}] ❌ 日报发送失败: {e}")
