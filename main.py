@@ -6,7 +6,7 @@ import time
 
 from config import cfg
 from gemini import generate_report, generate_report_macro
-from yf import fetch_stock_data, get_macro_data, plot_macro_chart
+from yf import fetch_stock_data, get_macro_data, plot_macro_chart, analyze_stock
 from msg import send_text_to_telegram, send_photo_to_telegram
 
 # ================= 配置 =================
@@ -16,16 +16,25 @@ TELEGRAM_PARSE_MODE = cfg["telegram"]["parse_mode"]
 TELEGRAM_IMG_PATH = cfg["telegram"]["img_path"]  # 图片地址
 TELEGRAM_CHAT_ID = cfg["telegram"]["chat_id"]
 TELEGRAM_CHANNEL_ID = cfg["telegram"]["channel_id"]
+STOCKS = cfg["yfinance"]["stocks"]  # 关注的股票
+
 
 # === 初始化 Bot ===
 bot = TeleBot(TELEGRAM_TOKEN)
+
+
+# ================= 生成并推送日报 =================
+def daily_stock_report():
+    for t in STOCKS:
+        report = analyze_stock(t)
+        send_text_to_telegram(bot, TELEGRAM_CHANNEL_ID, report)
 
 
 # ================= 每日任务 =================
 def daily_task():
     try:
         # 文字日报
-        stock_data = fetch_stock_data()
+        stock_data = fetch_stock_data(STOCKS)
         report = generate_report(stock_data)
         print(report)
         send_text_to_telegram(bot, TELEGRAM_CHAT_ID, report)
@@ -39,6 +48,9 @@ def daily_task():
         print(report_macro)
         send_photo_to_telegram(bot, TELEGRAM_CHAT_ID, report_macro, filename)
         # send_photo_to_telegram(bot, TELEGRAM_CHANNEL_ID, report_macro, filename)
+
+        # 股票预测推送日报
+        daily_stock_report()
         print(f"[{datetime.now()}] ✅ 今日日报发送成功")
     except Exception as e:
         print(f"[{datetime.now()}] ❌ 日报发送失败: {e}")

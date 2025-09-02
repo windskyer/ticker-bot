@@ -2,10 +2,10 @@ import pandas as pd
 import yfinance as yf
 import matplotlib.pyplot as plt
 from matplotlib import font_manager
+from datetime import datetime
 from config import cfg
 
 # ================= 配置 =================
-STOCKS = cfg["yfinance"]["stocks"]  # 关注的股票
 PERIOD = cfg["yfinance"]["period"]  # 拉取周期
 INTERVAL = cfg["yfinance"]["interval"]  # 拉取粒度
 
@@ -28,8 +28,8 @@ set_chinese_font()
 
 
 # ================= 股票/宏观数据 =================
-def fetch_stock_data():
-    data = yf.download(STOCKS, period=PERIOD, interval=INTERVAL, auto_adjust=True)["Close"]
+def fetch_stock_data(stocks):
+    data = yf.download(stocks, period=PERIOD, interval=INTERVAL, auto_adjust=True)["Close"]
     latest = data.tail(1).to_dict()
     return latest
 
@@ -134,3 +134,47 @@ def plot_strategies(ma_df, mom_df, arb_df, filename="strategy_report.png"):
     plt.savefig(filename)
     plt.close()
     return filename
+
+
+# ================= 股票分析 =================
+def analyze_stock(ticker_symbol: str):
+    ticker = yf.Ticker(ticker_symbol)
+    hist = ticker.history(period="6mo")
+
+    # 最近收盘价 & 涨跌幅
+    last_close = hist["Close"].iloc[-1] if not hist.empty else None
+    pct_change = (last_close - hist["Close"].iloc[0]) / hist["Close"].iloc[0] * 100 if not hist.empty else None
+
+    # 分析师预测：EPS / Revenue
+    forecast = ticker.get_earnings_forecasts()
+    if forecast.empty or "earningsAvg" not in forecast.columns:
+        # 回退到最近季度实际 EPS
+        eps_last = None
+        quarterly_eps = ticker.quarterly_earnings
+        if not quarterly_eps.empty:
+            eps_last = quarterly_eps["Earnings"].iloc[-1]
+    else:
+        eps_last = forecast["earningsAvg"].iloc[0]
+
+    # 评级（HOLD/BUY/SELL）
+    try:
+        rating = ticker.recommendations
+        rating_summary = rating["To Grade"].mode()[0] if not rating.empty else "HOLD"
+    except Exception:
+        rating_summary = "HOLD"
+
+    report = f"""
+📊 股票自动分析报告
+========================
+公司: {ticker.info.get('longName', ticker_symbol)} ({ticker_symbol})
+时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+
+💰 当前价格: {last_close}
+🎯 分析师平均目标价: {eps_last if eps_last else '无数据'}
+📝 分析师评级: {rating_summary}
+
+📊 最近 6 个月涨跌幅: {pct_change:.2f}% 
+
+⚠️ 免责声明: 本报告仅供学习和参考，不构成投资建议。
+"""
+    return report
