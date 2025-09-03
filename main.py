@@ -28,7 +28,7 @@ def daily_stock_report(tickers):
     for t in tickers:
         report = analyze_stock(t)
         send_text_to_telegram(bot, TELEGRAM_CHAT_ID, report)
-        time.sleep(3)
+        time.sleep(2)
 
 
 # ================= 每日任务 =================
@@ -40,7 +40,6 @@ def daily_task():
         # 文字日报
         stock_data = fetch_stock_data(STOCKS)
         report = generate_report(stock_data)
-        print(report)
         send_text_to_telegram(bot, TELEGRAM_CHAT_ID, report)
         # send_text_to_telegram(bot, TELEGRAM_CHANNEL_ID, report)
 
@@ -49,7 +48,6 @@ def daily_task():
         filename = f"{TELEGRAM_IMG_PATH}/macro.png"
         plot_macro_chart(macro_data, filename)
         report_macro = generate_report_macro(macro_data)
-        print(report_macro)
         send_photo_to_telegram(bot, TELEGRAM_CHAT_ID, report_macro, filename)
         # send_photo_to_telegram(bot, TELEGRAM_CHANNEL_ID, report_macro, filename)
         print(f"[{datetime.now()}] ✅ 今日日报发送成功")
