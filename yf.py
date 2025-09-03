@@ -139,41 +139,52 @@ def plot_strategies(ma_df, mom_df, arb_df, filename="strategy_report.png"):
 # ================= 股票分析 =================
 def analyze_stock(ticker_symbol: str):
     ticker = yf.Ticker(ticker_symbol)
-    hist = ticker.history(period="6mo")
 
-    # 最近收盘价 & 涨跌幅
-    last_close = hist["Close"].iloc[-1] if not hist.empty else None
-    pct_change = (last_close - hist["Close"].iloc[0]) / hist["Close"].iloc[0] * 100 if not hist.empty else None
+    # 基本信息
+    info = ticker.info
+    name = info.get("shortName", ticker_symbol)
+    current_price = info.get("currentPrice", None)
+    target_mean = info.get("targetMeanPrice", None)
+    target_high = info.get("targetHighPrice", None)
+    target_low = info.get("targetLowPrice", None)
+    recommendation = info.get("recommendationKey", "N/A")
 
-    # 分析师预测：EPS / Revenue
-    forecast = ticker.get_earnings_forecasts()
-    if forecast.empty or "earningsAvg" not in forecast.columns:
-        # 回退到最近季度实际 EPS
-        eps_last = None
-        quarterly_eps = ticker.quarterly_earnings
-        if not quarterly_eps.empty:
-            eps_last = quarterly_eps["Earnings"].iloc[-1]
-    else:
-        eps_last = forecast["earningsAvg"].iloc[0]
+    # 历史股价走势（近 6 个月）
+    hist = ticker.history(period="6mo", interval="1d")
+    last_close, pct_change = None, None
+    if not hist.empty:
+        last_close = hist["Close"].iloc[-1]
+        pct_change = (last_close - hist["Close"].iloc[0]) / hist["Close"].iloc[0] * 100
 
-    # 评级（HOLD/BUY/SELL）
+    # 分析师预测 (新版 API)
+    eps_next_q, revenue_next_q = None, None
     try:
-        rating = ticker.recommendations
-        rating_summary = rating["To Grade"].mode()[0] if not rating.empty else "HOLD"
+        earnings_forecast = ticker.get_earnings_forecasts()
+        if earnings_forecast is not None and not earnings_forecast.empty:
+            if "earningsAvg" in earnings_forecast.columns:
+                eps_next_q = earnings_forecast.loc["avg", "earningsAvg"]
+            if "revenueAvg" in earnings_forecast.columns:
+                revenue_next_q = earnings_forecast.loc["avg", "revenueAvg"]
     except Exception:
-        rating_summary = "HOLD"
+        pass
 
+    # 生成报告
     report = f"""
 📊 股票自动分析报告
 ========================
-公司: {ticker.info.get('longName', ticker_symbol)} ({ticker_symbol})
-时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+公司: {name} ({ticker_symbol})
+时间: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
 
-💰 当前价格: {last_close}
-🎯 分析师平均目标价: {eps_last if eps_last else '无数据'}
-📝 分析师评级: {rating_summary}
+💰 当前价格: {current_price}
+📈 目标价区间: {target_low} ~ {target_high}
+🎯 平均目标价: {target_mean}
+📝 分析师评级: {recommendation.upper()}
 
-📊 最近 6 个月涨跌幅: {pct_change:.2f}% 
+📊 最近 6 个月涨跌幅: {pct_change:.2f}% （收盘价 {last_close}）
+
+🔮 分析师预测（下一季度）:
+- 每股收益 (EPS): {eps_next_q}
+- 营收 (Revenue): {revenue_next_q}
 
 ⚠️ 免责声明: 本报告仅供学习和参考，不构成投资建议。
 """
