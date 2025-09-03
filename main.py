@@ -27,7 +27,8 @@ bot = TeleBot(TELEGRAM_TOKEN)
 def daily_stock_report(tickers):
     for t in tickers:
         report = analyze_stock(t)
-        send_text_to_telegram(bot, TELEGRAM_CHANNEL_ID, report)
+        send_text_to_telegram(bot, TELEGRAM_CHAT_ID, report)
+        time.sleep(3)
 
 
 # ================= 每日任务 =================
